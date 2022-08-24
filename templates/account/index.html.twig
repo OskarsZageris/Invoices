@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block title %}{% endblock %}
+
+    {% block customstylesheet %}
+
+            <link rel="stylesheet" href="{{ asset('assets/css/table.css') }}">
+    {% endblock %}
+
+{% block body %}
+
+
+<div class="example-wrapper">
+    <h1></h1>
+    <ul>
+    </ul>
+</div>
+    <table>
+
+            <th>Client</th>
+            <th>Type</th>
+            <th>Issuer</th>
+            <th>Owner</th>
+            <th>Number</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Paid</th>
+            <th>Unpaid</th>
+          <th>Actions</th>
+        </tr>
+
+        {% for invoice in invoices %}
+            <tr>
+             <td align="center">  {{ invoice.Client }}</td>
+                <td align="center"> {{ invoice.Type }}</td>
+               <td align="center"> {{ invoice.Issuer }}</td>
+               <td align="center"> {{ invoice.Owner }}</td>
+               <td align="center"> {{ invoice.id }}</td>
+                <td align="center">{{ invoice.IssueDate|date('Y-m-d') }}</td>
+                <td align="center">{{ invoice.DueDate|date('Y-m-d') }}</td>
+                <td align="right">{{ invoice.Amount }} EUR</td>
+                <td align="right">{{ invoice.Paid }} EUR</td>
+                <td align="right"> {{ invoice.Unpaid}} EUR</td>
+                <td> <a href="{{ path('delete_invoice',{'id':invoice.id}) }}"
+                        onclick="return confirm('Are you sure?')">Delete<i class="fas fa-trash"></i></a>
+                 <a href="{{ path('edit_invoice',{'id':invoice.id}) }}">Edit<i class="fas fa-trash"></i></a> </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+
+{% endblock %}

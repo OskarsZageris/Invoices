@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+{% block customstylesheet %}
+    {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('assets/css/table.css') }}">
+{% endblock%}
+
+{% block body %}
+    <a href="{{ asset('/') }}">Home Page</a>
+    <h2>Editing Invoice</h2>
+<ul>
+    {{ form_start(form) }}
+    <label for="Client">Client:</label>
+    {{ form_widget(form.Client) }}
+    <label for="Type">Type:</label>
+    {{ form_widget(form.Type) }}
+    <br>
+    <label for="Issuer">Issuer:</label>
+    {{ form_widget(form.Issuer) }}
+     <label for="Owner">Owner:</label>
+    {{ form_widget(form.Owner) }}
+    <br>
+    <label for="IssueDate">Issue Date:</label>
+    {{ form_widget(form.IssueDate) }}
+    <label for="DueDate">Due Date:</label>
+    {{ form_widget(form.DueDate) }}
+
+    <label for="Paid">Paid:</label>
+    {{ form_widget(form.Paid) }}
+</ul>
+    <button class="btn btn-primary mt-3" type="submit">Edit</button>
+    {{ form_end(form) }}
+
+    <br>
+    <table>
+    <tr>
+        <th>Product</th>
+        <th>JIRA</th>
+        <th>JIRA task</th>
+        <th>Client JIRA task</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Unit</th>
+        <th>Amount/Quantity</th>
+        <th>Total</th>
+        <th>Actions</th>
+    </tr>
+{#get existing tasks#}
+                {% for form in forms %}
+                    <div>
+                        {{ form_start(forms[loop.index0]) }}
+                        <tr>
+                        <td align="center"> {{ form_widget(forms[loop.index0].name,{value : products[ loop.index0 ].name}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].JIRA,{value : products[ loop.index0 ].JIRA}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].JiraTask,{value : products[ loop.index0 ].JiraTask}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].ClientJiraTask,{value : products[ loop.index0 ].ClientJiraTask}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].Description,{value : products[ loop.index0 ].Description}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].Price,{value : products[ loop.index0 ].Price}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].Unit,{value : products[ loop.index0 ].Unit}) }}</td>
+                        <td align="center"> {{ form_widget(forms[loop.index0].Amount,{value : products[ loop.index0 ].Amount}) }}</td>
+                            <td align="right">{{ products[ loop.index0 ].TotalSum }}</td>
+                            <td> <a href="{{ path('delete_product',{'id':products[ loop.index0 ].id}) }}"
+                                    onclick="return confirm('Are you sure?')">Delete<i class="fas fa-trash"></i></a>
+                                <input type="hidden" name="form" value="form{{ loop.index0 }}">
+                          <button class="btn btn-primary mt-3" name="id" value="{{products[ loop.index0 ].id}}" type="submit">Edit</button></td>
+                        </tr>
+                        {{ form_end(forms[loop.index0]) }}
+                    </div>
+                {% endfor %}
+
+    {{ form_start(productsForm) }}
+{#add new task#}
+        <td align="center"> {{ form_widget(productsForm.name, {'attr':{'placeholder' :'Product name'}}) }}</td>
+        <td align="center"> {{ form_widget(productsForm.JIRA) }}</td>
+        <td align="center"> {{ form_widget(productsForm.JiraTask) }}</td>
+        <td align="center"> {{ form_widget(productsForm.ClientJiraTask) }}</td>
+        <td align="center"> {{ form_widget(productsForm.Description) }}</td>
+        <td align="center"> {{ form_widget(productsForm.Price) }}</td>
+        <td align="center"> {{ form_widget(productsForm.Unit) }}</td>
+        <td align="center"> {{ form_widget(productsForm.Amount) }}</td>
+        <td align="center"></td>
+        <td align="center"> <button class="btn btn-primary mt-3" type="submit">Create new task</button></td>
+    {{ form_end(productsForm) }}
+    </table>
+    <br>
+    <div style="width: 80%; float:left">
+
+            {{ form_start(noteForm) }}
+            <label for="Notes">Notes:</label>
+            <br>
+        {% if not note.percent %}
+
+            {{ form_widget(noteForm.description,{'value' : 'empty'})  }}
+        {% else %}
+            {{ form_widget(noteForm.description,{value : note.description})  }}
+        {% endif %}
+            <br>
+            <td align="center"> <button class="btn btn-primary mt-3" type="submit">Submit</button></td>
+{#    <input type="button" value="Click Me!" onclick="submitForms()" />#}
+        </div>
+
+
+    <div style="width: 20%; float:right">
+        Total without VAT:      {{ invoice.amount }} EUR
+        <br>
+{% if not note.percent %}
+      VAT  {{ form_widget(noteForm.percent,{'value' : '0'})  }} %
+   {% else %}
+      VAT  {{ form_widget(noteForm.percent,{value : note.percent})  }} %
+        {% endif %}
+
+            {{ form_end(noteForm) }}
+
+        <br>
+        Total with VAT:     {{ invoice.amount+percent}} EUR
+
+    </div>
+
+{#    <script>#}
+{#        submitForms = function(){#}
+{#            document.forms["VATForm"].submit();#}
+{#            document.forms["noteForm"].submit();#}
+{#        }#}
+{#    </script>#}
+{% endblock %}
